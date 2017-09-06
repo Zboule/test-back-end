@@ -1,32 +1,31 @@
 
-import { ExpressAppWithAuth } from "./config/ExpressAppWithAuth";
-
-let app = new ExpressAppWithAuth()
-
 /**
- * Add routes
+ * @file	Entry point of the API
+ * @author	Jordane CURÉ
  */
+
+import { ExpressAppWithAuth } from './config/ExpressAppWithAuth'
+
+
+const app = new ExpressAppWithAuth()
+
 
 app.addGet(
-  "/",
+  '/',
   (req, res) => {
     res.json({
-      message: "Express is up yeah!"
-    });
+      message: 'Express is up yeah!',
+    })
   }
-);
+)
 
 app.addPrivateGet(
-  "/secret",
+  '/secret',
   (req, res) => {
-    res.json("Success! You can not see this without a token");
+    res.json('Success! You can not see this without a token')
   }
-);
+)
 
 
-/**
- * Start the app
- */
 app.startApp()
-
 

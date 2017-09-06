@@ -1,65 +1,71 @@
-import { StrategyOptions, Strategy, VerifiedCallback, ExtractJwt } from "passport-jwt";
-import { RequestHandler } from "express";
-import { sign } from "jsonwebtoken";
+
+/**
+ * @file	Create the JWT Strategy for passport
+ * @author	Jordane CURÉ
+ */
+
+import { Request, RequestHandler, Response } from 'express'
+import { sign } from 'jsonwebtoken'
+import { ExtractJwt, Strategy, StrategyOptions, VerifiedCallback } from 'passport-jwt'
 
 class PasseportStrategyFactory {
 
 
     private jwtOptions: StrategyOptions = {
         jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('jwt'),
-        secretOrKey: 'tasmanianDevil'
+        secretOrKey: 'tasmanianDevil',
     }
 
     public getJWTStrategy(): Strategy {
-        return new Strategy(this.jwtOptions, this.verifyCallBack);
+        return new Strategy(this.jwtOptions, this.verifyCallBack)
     }
 
     public getLoginFunction(): RequestHandler {
-        return (req, res) => {
-
-            console.log(req.body)
-            const user = this.getAuthUser(req.body.name, req.body.password)
-
-            if (!user) {
-                res.status(401).json({
-                    message: "utilisateur impossible à identifier"
-                });
-            }
-            else {
-                var payload = {
-                    id: user.id
-                };
-                var token = sign(payload, this.jwtOptions.secretOrKey);
-                res.json({
-                    message: "ok",
-                    token: token
-                });
-            }
-
-        }
+        return this.loginFunction
     }
 
-    
+    public loginFunction(req: Request, res: Response): void {
+
+        const user = this.getAuthUser(req.body.name, req.body.password)
+
+        if (!user) {
+            res.status(401).json({
+                message: 'Utilisateur impossible à identifier',
+            })
+        }
+        else {
+            const payload = {
+                id: user.id,
+            }
+            const token = sign(payload, this.jwtOptions.secretOrKey)
+            res.json({
+                message: 'ok',
+                token,
+            })
+        }
+
+    }
+
     private verifyCallBack(payload: any, done: VerifiedCallback): void {
 
         let user
-        if (payload.id === "jordane") {
+        if (payload.id === 'jordane') {
             user = {
-                name: "jordane"
+                name: 'jordane',
             }
         }
 
-        done(null, user ? user : user);
+        done(null, user ? user : user)
     }
 
-    //This logic must be move away
+    // This logic must be move away
     private getAuthUser(login: string, pwd: string): any {
         let user
 
-        if (login && login === "jordane" && pwd && pwd === "test") {
+        if (login && login === 'jordane' && pwd && pwd === 'test') {
             user = {
-                name: "jordane",
-                password: "test"
+                name: 'jordane',
+                password: 'test',
             }
         }
 
@@ -68,5 +74,5 @@ class PasseportStrategyFactory {
 
 }
 
-export const passeportStrategyFactory: PasseportStrategyFactory = new PasseportStrategyFactory();
+export const passeportStrategyFactory: PasseportStrategyFactory = new PasseportStrategyFactory()
 

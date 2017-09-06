@@ -1,12 +1,18 @@
 
-import * as express from "express";
-import { RequestHandler } from "express";
-import { PathParams } from "express-serve-static-core";
-import { Passport, PassportStatic } from "passport";
-import * as bodyParser from "body-parser";
+/**
+ * @file	Class that add auth to a wrap of an express app
+ * @author	Jordane CURÉ
+ */
 
-import { PassportFactory } from "./PasseportFactory";
-import { ExpressApp } from "./ExpressApp";
+import * as bodyParser from 'body-parser'
+import * as express from 'express'
+// tslint:disable-next-line:no-duplicate-imports
+import { RequestHandler } from 'express'
+import { PathParams } from 'express-serve-static-core'
+import { Passport, PassportStatic } from 'passport'
+
+import { ExpressApp } from './ExpressApp'
+import { PassportFactory } from './PasseportFactory'
 
 export class ExpressAppWithAuth extends ExpressApp {
 
@@ -18,23 +24,22 @@ export class ExpressAppWithAuth extends ExpressApp {
         this.setExpressWithAuthConfig()
     }
 
-    public addPrivateGet(path: PathParams, requestHandler: RequestHandler) {
+    public addPrivateGet(path: PathParams, requestHandler: RequestHandler): void {
         this.expressApp.get(
             path,
             this.passport.authenticate(
                 'jwt',
                 {
-                    session: false
+                    session: false,
                 }
             ),
             requestHandler
-        );
+        )
     }
 
-    private setExpressWithAuthConfig() {
-        this.expressApp.use(this.passport.initialize());
-        this.addPost("/login", PassportFactory.getLoginFunction())
+    private setExpressWithAuthConfig(): void {
+        this.expressApp.use(this.passport.initialize())
+        this.addPost('/login', PassportFactory.getLoginFunction())
     }
 }
-
 
